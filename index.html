@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism TTS Broadcaster Pro (PC Optimized)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;500;700&display=swap');
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --primary-glow: rgba(255, 255, 255, 0.4);
+            --accent-color: #00e676;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Pretendard', sans-serif;
+            background: radial-gradient(circle at 10% 20%, rgb(69, 39, 160) 0%, rgb(0, 0, 0) 90%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 300px; height: 300px; background: #7b2cbf; top: -50px; left: -50px; }
+        .orb-2 { width: 400px; height: 400px; background: #ff0054; bottom: -100px; right: -100px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
+        }
+
+        /* --- PC 최적화: 컨테이너 너비 확장 및 패딩 조정 --- */
+        .container {
+            width: 90%;
+            max-width: 900px; /* PC 화면에 맞춰 넓힘 */
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 8px; 
+        }
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+
+        /* --- PC 최적화: 그리드 레이아웃 (2단 구성) --- */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* 모바일 대응: 화면이 좁아지면 1단으로 변경 */
+        @media (max-width: 768px) {
+            .container { max-width: 450px; padding: 20px; }
+            .layout-grid { grid-template-columns: 1fr; gap: 15px; }
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0 0 20px 0;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            grid-column: 1 / -1; /* 제목은 전체 너비 사용 */
+        }
+
+        .section-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            margin-left: 10px;
+            opacity: 0.9;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .input-pill {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .input-pill:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .template-row {
+            display: flex;
+            gap: 8px;
+        }
+        .template-select {
+            flex: 1;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 12px;
+        }
+        .icon-btn {
+            width: 46px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .icon-btn:hover { background: rgba(255,255,255,0.2); }
+        .save-btn:hover { background: var(--accent-color); color: black; }
+        .del-btn:hover { background: #ff4081; border-color: #ff4081; }
+
+        textarea.input-pill {
+            border-radius: 20px;
+            resize: none;
+            height: 180px; /* PC 화면 활용을 위해 높이 증가 */
+            line-height: 1.5;
+        }
+
+        .tab-container {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50px;
+            padding: 4px;
+            margin-bottom: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .time-inputs {
+            display: none;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        .time-inputs.active { display: flex; }
+        
+        .timer-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+        .timer-group input { text-align: center; }
+        .timer-label { font-size: 0.8rem; opacity: 0.7; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .voice-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        
+        .custom-select-trigger {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        .custom-select-trigger:after {
+            content: '▼';
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .custom-options {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            z-index: 100;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .custom-options.open { display: block; }
+
+        .custom-option {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+        .custom-option:hover { background: rgba(255,255,255,0.1); }
+        .custom-option.selected { color: var(--accent-color); font-weight: bold; }
+
+        .preview-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .preview-btn:hover { background: var(--accent-color); color: black; border-color: var(--accent-color); }
+        
+        /* 대본 미리듣기용 작은 버튼 스타일 */
+        .script-preview-btn {
+            margin-top: 5px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            float: right; /* 라벨 오른쪽 배치 */
+        }
+        .script-preview-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .full-width-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            position: relative;
+            padding: 16px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.1s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50px;
+            padding: 2px;
+            background: radial-gradient(120px circle at var(--x, 50%) var(--y, 50%), rgba(255, 255, 255, 0.8), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:hover::before { opacity: 1; }
+
+        #status {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #ff4081;
+            font-weight: 500;
+            min-height: 1.2em;
+            grid-column: 1 / -1;
+        }
+        .playing { color: #00e676 !important; }
+
+        .status-pill {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            transform: translateX(-200%);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .status-pill.show {
+            transform: translateX(0);
+        }
+
+        .pill-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff4081;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        .pill-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .pill-title { font-size: 0.8rem; color: #aaa; margin-bottom: 2px; }
+        .pill-timer { font-size: 1.1rem; font-weight: 700; color: white; letter-spacing: 1px; }
+
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div id="statusPill" class="status-pill">
+        <div class="pill-dot"></div>
+        <div class="pill-content">
+            <span id="pillTitle" class="pill-title">No Schedule</span>
+            <span id="pillTimer" class="pill-timer">00:00:00</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>On-Air Scheduler</h1>
+        
+        <div class="layout-grid">
+            
+            <div class="section-group">
+                <div>
+                    <label>Template (Save/Load)</label>
+                    <div class="template-row">
+                        <select id="templateSelect" class="input-pill template-select">
+                            <option value="">-- 저장된 대본 선택 --</option>
+                        </select>
+                        <button id="saveTmplBtn" class="icon-btn save-btn" title="현재 내용 저장">💾</button>
+                        <button id="delTmplBtn" class="icon-btn del-btn" title="선택 템플릿 삭제">🗑️</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label>Title</label>
+                    <input type="text" id="titleInput" class="input-pill" placeholder="방송 제목 (예: 정오 뉴스)">
+                </div>
+
+                <div>
+                    <label>Broadcast Time</label>
+                    <div class="tab-container">
+                        <button class="tab-btn active" onclick="switchMode('time')">Specific Time</button>
+                        <button class="tab-btn" onclick="switchMode('timer')">Timer (Countdown)</button>
+                    </div>
+
+                    <div id="modeTime" class="time-inputs active" style="margin-top: 10px;">
+                        <input type="time" id="timeInput" class="input-pill">
+                    </div>
+
+                    <div id="modeTimer" class="time-inputs" style="flex-direction: row; justify-content: space-between; margin-top: 10px;">
+                        <div class="timer-group">
+                            <input type="number" id="timerH" class="input-pill" min="0" max="23" placeholder="0">
+                            <span class="timer-label">H</span>
+                        </div>
+                        <div class="timer-group">
+                            <input type="number" id="timerM" class="input-pill" min="0" max="59" placeholder="0">
+                            <span class="timer-label">M</span>
+                        </div>
+                        <div class="timer-group">
+                            <input type="number" id="timerS" class="input-pill" min="0" max="59" placeholder="0">
+                            <span class="timer-label">S</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <div>
+                    <label>Voice Model</label>
+                    <div class="voice-section">
+                        <div class="custom-select-wrapper" id="voiceWrapper">
+                            <div class="custom-select-trigger" id="voiceTrigger"><span>목소리 선택...</span></div>
+                            <div class="custom-options" id="voiceOptions">
+                            </div>
+                        </div>
+                        <button id="voicePreviewBtn" class="preview-btn" title="목소리 샘플 듣기">▶</button>
+                    </div>
+                </div>
+
+                <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <label style="margin-bottom: 0;">Script</label>
+                        <button id="scriptPreviewBtn" class="script-preview-btn">
+                            🔊 대본 미리듣기
+                        </button>
+                    </div>
+                    <textarea id="scriptText" class="input-pill" placeholder="방송할 대본을 입력하세요..."></textarea>
+                </div>
+            </div>
+
+            <div id="status"></div>
+            
+            <div class="full-width-actions">
+                <button id="scheduleBtn" class="btn"><span>Schedule Broadcast</span></button>
+                <button id="stopBtn" class="btn" style="background: rgba(255, 50, 50, 0.2);"><span>Stop / Reset</span></button>
+            </div>
+
+        </div> </div>
+
+    <script>
+        // DOM 요소 가져오기
+        const titleInput = document.getElementById('titleInput');
+        const timeInput = document.getElementById('timeInput');
+        const scriptText = document.getElementById('scriptText');
+        const scheduleBtn = document.getElementById('scheduleBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        
+        // 미리듣기 버튼 분리
+        const voicePreviewBtn = document.getElementById('voicePreviewBtn');
+        const scriptPreviewBtn = document.getElementById('scriptPreviewBtn');
+        
+        // 템플릿 관련 요소
+        const templateSelect = document.getElementById('templateSelect');
+        const saveTmplBtn = document.getElementById('saveTmplBtn');
+        const delTmplBtn = document.getElementById('delTmplBtn');
+
+        // 커스텀 셀렉트 관련
+        const voiceWrapper = document.getElementById('voiceWrapper');
+        const voiceTrigger = document.getElementById('voiceTrigger');
+        const voiceOptions = document.getElementById('voiceOptions');
+        const voiceTriggerSpan = voiceTrigger.querySelector('span');
+
+        // 타이머 모드 입력
+        const timerH = document.getElementById('timerH');
+        const timerM = document.getElementById('timerM');
+        const timerS = document.getElementById('timerS');
+
+        // 플로팅 필
+        const statusPill = document.getElementById('statusPill');
+        const pillTitle = document.getElementById('pillTitle');
+        const pillTimer = document.getElementById('pillTimer');
+
+        let voices = [];
+        let selectedVoiceIndex = -1;
+        let broadcastTimer = null;
+        let currentMode = 'time'; // 'time' or 'timer'
+        let isScheduled = false;
+
+        // --- 0. 템플릿 관리 기능 (LocalStorage) ---
+        const STORAGE_KEY = 'tts_templates';
+
+        function loadTemplates() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const templates = stored ? JSON.parse(stored) : [];
+            
+            templateSelect.innerHTML = '<option value="">-- 저장된 대본 선택 --</option>';
+            
+            templates.forEach((tmpl, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = tmpl.title || `대본 ${index + 1}`;
+                templateSelect.appendChild(opt);
+            });
+        }
+
+        function saveCurrentTemplate() {
+            const title = titleInput.value.trim();
+            const script = scriptText.value.trim();
+
+            if (!title || !script) {
+                alert("저장하려면 제목과 대본을 모두 입력해주세요.");
+                return;
+            }
+
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const templates = stored ? JSON.parse(stored) : [];
+
+            templates.push({ title, script });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+            
+            loadTemplates(); 
+            templateSelect.value = templates.length - 1;
+            statusDiv.textContent = "템플릿이 저장되었습니다.";
+            setTimeout(() => statusDiv.textContent = "", 2000);
+        }
+
+        function deleteCurrentTemplate() {
+            const idx = templateSelect.value;
+            if (idx === "") {
+                alert("삭제할 템플릿을 선택해주세요.");
+                return;
+            }
+
+            if(!confirm("정말 이 템플릿을 삭제하시겠습니까?")) return;
+
+            const stored = localStorage.getItem(STORAGE_KEY);
+            let templates = stored ? JSON.parse(stored) : [];
+            
+            templates.splice(idx, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+            
+            titleInput.value = "";
+            scriptText.value = "";
+            
+            loadTemplates();
+            statusDiv.textContent = "삭제되었습니다.";
+            setTimeout(() => statusDiv.textContent = "", 2000);
+        }
+
+        templateSelect.addEventListener('change', (e) => {
+            const idx = e.target.value;
+            if (idx === "") return;
+
+            const stored = localStorage.getItem(STORAGE_KEY);
+            const templates = stored ? JSON.parse(stored) : [];
+            const selected = templates[idx];
+
+            if (selected) {
+                titleInput.value = selected.title;
+                scriptText.value = selected.script;
+            }
+        });
+
+        saveTmplBtn.addEventListener('click', saveCurrentTemplate);
+        delTmplBtn.addEventListener('click', deleteCurrentTemplate);
+
+        loadTemplates();
+
+
+        // --- 1. 모드 전환 로직 ---
+        function switchMode(mode) {
+            currentMode = mode;
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const modeTime = document.getElementById('modeTime');
+            const modeTimer = document.getElementById('modeTimer');
+
+            if (mode === 'time') {
+                tabBtns[0].classList.add('active');
+                tabBtns[1].classList.remove('active');
+                modeTime.classList.add('active');
+                modeTimer.classList.remove('active');
+                modeTimer.style.display = 'none';
+                setTimeout(() => modeTime.style.display = 'flex', 10);
+            } else {
+                tabBtns[0].classList.remove('active');
+                tabBtns[1].classList.add('active');
+                modeTime.classList.remove('active');
+                modeTime.style.display = 'none';
+                setTimeout(() => {
+                    modeTimer.style.display = 'flex';
+                    modeTimer.classList.add('active');
+                }, 10);
+            }
+        }
+
+        // --- 2. 커스텀 드롭다운 & 보이스 로드 ---
+        function populateVoices() {
+            voices = window.speechSynthesis.getVoices();
+            if(voices.length === 0) return;
+
+            voiceOptions.innerHTML = '';
+            voices.sort((a, b) => {
+                if (a.lang.includes('ko') && !b.lang.includes('ko')) return -1;
+                if (!a.lang.includes('ko') && b.lang.includes('ko')) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            voices.forEach((voice, index) => {
+                const div = document.createElement('div');
+                div.className = 'custom-option';
+                div.textContent = `${voice.name} (${voice.lang})`;
+                div.dataset.value = index;
+                div.addEventListener('click', () => {
+                    selectVoice(index, div.textContent);
+                });
+                voiceOptions.appendChild(div);
+
+                if (index === selectedVoiceIndex) {
+                    div.classList.add('selected');
+                }
+            });
+
+            if (selectedVoiceIndex === -1) {
+                const krIndex = voices.findIndex(v => v.lang.includes('ko'));
+                if (krIndex !== -1) {
+                    selectVoice(krIndex, `${voices[krIndex].name} (${voices[krIndex].lang})`);
+                } else if (voices.length > 0) {
+                    selectVoice(0, `${voices[0].name} (${voices[0].lang})`);
+                } else {
+                    voiceTriggerSpan.textContent = "사용 가능한 목소리가 없습니다.";
+                }
+            }
+        }
+
+        function selectVoice(index, text) {
+            selectedVoiceIndex = index;
+            voiceTriggerSpan.textContent = text;
+            voiceOptions.classList.remove('open');
+            document.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
+            const selectedOpt = voiceOptions.querySelector(`div[data-value="${index}"]`);
+            if(selectedOpt) selectedOpt.classList.add('selected');
+        }
+
+        voiceTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            voiceOptions.classList.toggle('open');
+        });
+
+        window.addEventListener('click', () => {
+            voiceOptions.classList.remove('open');
+        });
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoices;
+        }
+        setTimeout(populateVoices, 100);
+
+        // --- 3. 미리듣기 기능 (분리됨 & 수정됨) ---
+
+        // A. 목소리 샘플 듣기 (짧은 문장)
+        voicePreviewBtn.addEventListener('click', () => {
+            playTTS("안녕하세요. 제 목소리는 이렇게 들립니다. 테스트 중입니다.", "voice");
+        });
+
+        // B. 대본 미리듣기 (입력된 텍스트)
+        scriptPreviewBtn.addEventListener('click', () => {
+            const script = scriptText.value.trim();
+            if(!script) {
+                statusDiv.textContent = "대본을 먼저 입력해주세요.";
+                setTimeout(() => statusDiv.textContent = "", 2000);
+                return;
+            }
+            playTTS(script, "script");
+        });
+
+        // 공통 TTS 재생 함수 (버그 수정)
+        function playTTS(text, type) {
+            // 1. 기존 재생 취소 (필수)
+            window.speechSynthesis.cancel();
+
+            if (selectedVoiceIndex === -1 || !voices[selectedVoiceIndex]) {
+                statusDiv.textContent = "목소리를 선택해주세요.";
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voices[selectedVoiceIndex];
+            utterance.rate = 1.0;
+
+            // 상태 표시
+            if(type === 'voice') statusDiv.textContent = "🔊 목소리 테스트 중...";
+            else statusDiv.textContent = "🔊 대본 미리듣기 재생 중...";
+            
+            statusDiv.classList.add('playing');
+
+            utterance.onend = () => {
+                statusDiv.textContent = "";
+                statusDiv.classList.remove('playing');
+            };
+
+            utterance.onerror = (e) => {
+                console.error("TTS Error:", e);
+                statusDiv.textContent = "재생 오류 발생. 브라우저 설정을 확인하세요.";
+            }
+
+            // 약간의 딜레이 후 재생 (브라우저 버그 회피)
+            setTimeout(() => {
+                window.speechSynthesis.speak(utterance);
+            }, 10);
+        }
+
+
+        // --- 4. 예약 로직 ---
+        scheduleBtn.addEventListener('click', () => {
+            if (isScheduled) return;
+            window.speechSynthesis.cancel();
+
+            const script = scriptText.value.trim();
+            const title = titleInput.value.trim() || "예약 방송";
+            
+            if (!script || selectedVoiceIndex === -1) {
+                statusDiv.textContent = "대본과 목소리를 확인해주세요.";
+                return;
+            }
+
+            let targetTime = new Date();
+
+            if (currentMode === 'time') {
+                const selectedTime = timeInput.value;
+                if (!selectedTime) {
+                    statusDiv.textContent = "방송 시간을 설정해주세요.";
+                    return;
+                }
+                const [h, m] = selectedTime.split(':').map(Number);
+                targetTime.setHours(h, m, 0, 0);
+                if (targetTime < new Date()) {
+                    targetTime.setDate(targetTime.getDate() + 1); 
+                }
+            } else {
+                const h = parseInt(timerH.value) || 0;
+                const m = parseInt(timerM.value) || 0;
+                const s = parseInt(timerS.value) || 0;
+                
+                if (h === 0 && m === 0 && s === 0) {
+                    statusDiv.textContent = "타이머 시간을 입력해주세요.";
+                    return;
+                }
+                targetTime = new Date(Date.now() + (h * 3600 + m * 60 + s) * 1000);
+            }
+
+            isScheduled = true;
+            scheduleBtn.disabled = true;
+            scheduleBtn.style.opacity = "0.5";
+            statusDiv.textContent = "방송 대기 중...";
+            
+            pillTitle.textContent = title;
+            statusPill.classList.add('show');
+
+            broadcastTimer = setInterval(() => {
+                const now = new Date();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    clearInterval(broadcastTimer);
+                    // 예약 실행 시 playTTS 함수 대신 직접 호출 (onend 처리를 위해)
+                    executeBroadcast(script, voices[selectedVoiceIndex]);
+                    
+                    statusDiv.textContent = "방송 송출 중...";
+                    statusDiv.classList.add('playing');
+                    
+                    pillTimer.textContent = "ON AIR";
+                    document.querySelector('.pill-dot').style.background = "#00e676";
+                } else {
+                    const h = Math.floor(diff / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    const timeString = 
+                        String(h).padStart(2,'0') + ":" + 
+                        String(m).padStart(2,'0') + ":" + 
+                        String(s).padStart(2,'0');
+                    
+                    pillTimer.textContent = timeString;
+                }
+            }, 1000);
+        });
+
+        function executeBroadcast(text, voice) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voice;
+            
+            utterance.onend = () => {
+                resetState("방송 종료");
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        stopBtn.addEventListener('click', () => {
+            resetState("방송 취소됨");
+        });
+
+        function resetState(msg) {
+            window.speechSynthesis.cancel();
+            if (broadcastTimer) clearInterval(broadcastTimer);
+            isScheduled = false;
+            scheduleBtn.disabled = false;
+            scheduleBtn.style.opacity = "1";
+            statusDiv.textContent = msg;
+            statusDiv.classList.remove('playing');
+            
+            statusPill.classList.remove('show');
+            setTimeout(() => {
+                pillTimer.textContent = "00:00:00";
+                document.querySelector('.pill-dot').style.background = "#ff4081";
+            }, 500);
+        }
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                btn.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                btn.style.setProperty('--y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+    </script>
+</body>
+</html>
