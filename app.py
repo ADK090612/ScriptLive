@@ -251,7 +251,7 @@ class AnnouncerApp(QMainWindow):
             self.label_status.setStyleSheet("color: #ff4081;")
 
     def preview_voice(self):
-        self.generate_and_play("안녕하세요. 목소리 테스트 중입니다.")
+        self.generate_and_play("안녕하세요? 음성 모델 테스트 중입니다.")
 
     def preview_script(self):
         script = self.text_script.toPlainText()
@@ -263,7 +263,7 @@ class AnnouncerApp(QMainWindow):
 
         script = self.text_script.toPlainText()
         if not script:
-            QMessageBox.warning(self, "경고", "대본을 입력하세요.")
+            QMessageBox.warning(self, "알림", "스크립트를 입력하세요.")
             return
 
         # 시간 계산
