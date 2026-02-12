@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>AI 가상 아나운서 (Pro)</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #4527a0, stop:1 #000000);
+}
+QLabel { color: #00e676; font-weight: bold; }
+QLineEdit, QTextEdit, QComboBox, QTimeEdit, QSpinBox {
+	background-color: rgba(0, 0, 0, 50);
+	border: 1px solid rgba(255, 255, 255, 50);
+	border-radius: 10px;
+	padding: 5px;
+	color: white;
+	selection-background-color: #00e676;
+    selection-color: black;
+}
+QPushButton {
+	background-color: rgba(255, 255, 255, 25);
+	border: 1px solid rgba(255, 255, 255, 30);
+	border-radius: 15px;
+	color: white;
+	padding: 10px;
+}
+QPushButton:hover {
+	background-color: rgba(255, 255, 255, 50);
+	border: 1px solid #00e676;
+}
+QTabWidget::pane { border: 0; }
+QTabBar::tab {
+	background: rgba(0,0,0,50);
+	color: gray;
+	padding: 8px 20px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+QTabBar::tab:selected {
+	background: rgba(255,255,255,40);
+	color: white;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="label_title">
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: white; margin-bottom: 20px;</string>
+      </property>
+      <property name="text">
+       <string>On-Air Scheduler Pro</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_Main">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_Left">
+        <item>
+         <widget class="QLabel" name="label_1">
+          <property name="text">
+           <string>템플릿 (저장/불러오기)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_Template">
+          <item>
+           <widget class="QComboBox" name="combo_template">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_save_tmpl">
+            <property name="text">
+             <string>💾</string>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_del_tmpl">
+            <property name="text">
+             <string>🗑️</string>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_1">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>방송 제목</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="input_title">
+          <property name="placeholderText">
+           <string>방송 제목을 입력하세요</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>방송 시간 설정</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_time">
+           <attribute name="title">
+            <string>특정 시간</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_tab1">
+            <item>
+             <widget class="QTimeEdit" name="time_edit">
+              <property name="displayFormat">
+               <string>HH:mm:ss</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_timer">
+           <attribute name="title">
+            <string>타이머 (카운트다운)</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_timer">
+            <item>
+             <widget class="QSpinBox" name="spin_h">
+              <property name="suffix">
+               <string> 시</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spin_m">
+              <property name="suffix">
+               <string> 분</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="spin_s">
+              <property name="suffix">
+               <string> 초</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_Left">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_Right">
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>목소리 모델 (TTS)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_Voice">
+          <item>
+           <widget class="QComboBox" name="combo_voice">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_preview_voice">
+            <property name="text">
+             <string>▶</string>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>40</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_output">
+          <property name="text">
+           <string>오디오 출력 장치 (스피커 선택)</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">margin-top: 10px;</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="combo_output">
+          <property name="toolTip">
+           <string>방송을 송출할 스피커를 선택하세요</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_ScriptHeader">
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>대본 (Script)</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">margin-top: 10px;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_preview_script">
+            <property name="text">
+             <string>🔊 대본 미리듣기</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="text_script">
+          <property name="placeholderText">
+           <string>방송할 내용을 입력하세요...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_status">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: #ff4081; margin: 10px 0;</string>
+      </property>
+      <property name="text">
+       <string>대기 중...</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_Actions">
+      <item>
+       <widget class="QPushButton" name="btn_schedule">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(0, 230, 118, 0.2); border-color: #00e676;</string>
+        </property>
+        <property name="text">
+         <string>방송 예약 (Schedule)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_stop">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(255, 64, 129, 0.2); border-color: #ff4081;</string>
+        </property>
+        <property name="text">
+         <string>정지 / 초기화</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
